@@ -1,6 +1,5 @@
-pre-commit
-black
-isort
-requests
-flask
-pytest
+requests~=2.25.1
+beautifulsoup4~=4.9.3
+pytest~=6.2.4
+isort~=5.8.0
+black~=21.5b2
