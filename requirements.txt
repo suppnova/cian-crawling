@@ -3,3 +3,5 @@ beautifulsoup4~=4.9.3
 pytest~=6.2.4
 isort~=5.8.0
 black~=21.5b2
+fake_useragent
+free-proxy

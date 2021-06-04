@@ -12,3 +12,11 @@ class Flat:
             container.find("p", {"data-mark": "PriceInfo"}).text[:-5].replace(" ", "")
         )
         self.area = round(self.main_price / self.price_per_m2, 2)
+
+    def get_row(self):
+        return (
+            self.address,
+            self.main_price,
+            self.price_per_m2,
+            self.area
+        )
