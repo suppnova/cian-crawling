@@ -10,27 +10,28 @@ from app.models.flat import Flat
 
 regions = {"msk": 1, "spb": 2, "ekb": 4743}
 
+# districts = {
+#     "msk": [151, 325] + list(range(4, 12)),
+#     "spb": range(135, 151),
+#     "ekb": range(286, 293),
+# }
+
 districts = {
     "msk": [151, 325] + list(range(4, 12)),
     "spb": range(135, 151),
-    "ekb": range(286, 293),
+    "ekb": [288],
 }
 
+
 URL = "http://cian.ru/cat.php"
-REGION = "msk"
-# PROXY = "89.108.88.146:1080"
+REGION = "ekb"
 
 
-CSV_HEADERS = (
-    "address",
-    "main_price",
-    "price_per_m2",
-    "area"
-)
+CSV_HEADERS = ("address", "main_price", "price_per_m2", "area")
 
 
 def gen_proxy():
-    with open('socks5.csv', newline='') as f:
+    with open("super_sock4.csv", newline="") as f:
         next(f)
         for line in csv.reader(f):
             yield line[0]
@@ -62,7 +63,7 @@ class CianCrawler:
         # }
         self.region = region
         self.district = district
-        self.page = 1
+        self.page = 7
         self.flats = []
         self.proxies_dict = None
         self.update_proxy()
@@ -72,7 +73,7 @@ class CianCrawler:
 
     def update_proxy(self):
         proxy = next(get_proxy)
-        self.proxies_dict = {"http": f"socks5://{proxy}", "https": f"socks5://{proxy}"}
+        self.proxies_dict = {"http": f"socks4://{proxy}", "https": f"socks4://{proxy}"}
         self.session = requests.Session()
         self.session.headers = {
             # "User-Agent": UserAgent().random
@@ -81,7 +82,7 @@ class CianCrawler:
             "Accept-Language": "en-US,en;q=0.9,ru;q=0.8,ka;q=0.7",
             "User-Agent": UserAgent().random,
             "Referer": "http://www.cian.ru/",
-            "Cookie": ""
+            "Cookie": "",
         }
         self.session.proxy = self.proxies_dict
         # self.session.proxies.update(self.proxies_dict)
@@ -117,7 +118,7 @@ class CianCrawler:
                     "region": self.region,
                 },
                 timeout=10,
-                proxies=self.proxies_dict
+                proxies=self.proxies_dict,
             )
             # print(response.text)
             return response.text
@@ -125,7 +126,7 @@ class CianCrawler:
         except Exception as exc:
             print("Failed", self.proxies_dict, exc)
             self.update_proxy()
-            return ''
+            return ""
 
     def parse_page(self) -> bool:
         """Parse a given page.
@@ -134,10 +135,17 @@ class CianCrawler:
         For every flat gets container for parsing, then adds Flat instance to flats list.
         :return: None
         """
-        print("Parsing region:", self.region, "district:", self.district, "page:", self.page)
+        print(
+            "Parsing region:",
+            self.region,
+            "district:",
+            self.district,
+            "page:",
+            self.page,
+        )
         soup = BeautifulSoup(self.get_response(), features="html.parser")
         containers = soup.find_all("div", {"data-name": "LinkArea"})
-        print('containers len: ',len(containers))
+        print("containers len: ", len(containers))
         if not containers:
             return False
         for container in containers:
@@ -150,14 +158,13 @@ class CianCrawler:
         pages = 25
         write_to_csv2(CSV_HEADERS, self.district)
         while self.page <= pages:
-            time.sleep(5)
+            time.sleep(1)
 
             if not self.parse_page():
                 print("page for restart", self.page)
                 self.update_proxy()
                 continue
                 # break
-            write_to_csv2(self.flats[-1].get_row(), self.district)
             [write_to_csv2(flat.get_row(), self.district) for flat in self.flats]
             self.page += 1
             self.flats = []
@@ -174,28 +181,12 @@ def write_to_csv(crawler: CianCrawler, distr: int):
     flats = crawler.crawl()
     with open(f"../flats{distr}.csv", "w", encoding="utf-8") as fi:
         pen = csv.writer(fi)
-        pen.writerow(
-            (
-                "address",
-                "main_price",
-                "price_per_m2",
-                "area"
-            )
-        )
+        pen.writerow(("address", "main_price", "price_per_m2", "area"))
         for flat in flats:
-            pen.writerow(
-                (
-                    flat.address,
-                    flat.main_price,
-                    flat.price_per_m2,
-                    flat.area
-                )
-            )
+            pen.writerow((flat.address, flat.main_price, flat.price_per_m2, flat.area))
 
 
 for district in districts[REGION]:
     CianCrawler(regions[REGION], district).crawl()
     # write_to_csv(CianCrawler(regions[REGION], district), district)
-# crawler = CianCrawler(regions[REGION], districts[REGION][0])
-# loop = asyncio.get_event_loop()
-# loop.run_until_complete(main())
+    # crawler = CianCrawler(regions[REGION], districts[REGION][0])
