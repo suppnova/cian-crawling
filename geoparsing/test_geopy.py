@@ -6,8 +6,9 @@ from process_address_string import process_address
 
 from districts import districts
 
-district = 287
+REGION = "ekb"
 geolocator = Nominatim(user_agent="geocoder")
+# d = districts[REGION][2:]
 
 
 def get_coordinates(address):
@@ -19,7 +20,7 @@ def get_coordinates(address):
 
 def csv_reader(file_obj):
     """
-    Read a csv file
+    Read a csv file.
     """
     reader = csv.reader(file_obj)
     rows = []
@@ -30,29 +31,29 @@ def csv_reader(file_obj):
 
 def write_to_csv(distr, lat, lon, price):
     with open(
-        f"../coords/flats{distr}_coords_prices.csv", "a+", encoding="utf-8"
+        f"../coords/{REGION}/flats{distr}_coords_prices.csv", "a+", encoding="utf-8"
     ) as fi:
         pen = csv.writer(fi)
         pen.writerow((lat, lon, price))
 
 
 if __name__ == "__main__":
-    csv_path = f"../flats/flats{district}.csv"
-    # for district in districts["msk"]:
-    with open(csv_path, "r", encoding="utf-8") as f_obj:
-        flats = csv_reader(f_obj)
-        for flat in flats:
-            print(flat)
-            if not flat:
-                continue
-            coordinates = get_coordinates(process_address(flat[0]))
-            if not coordinates:
-                continue
-            # lat, lon = coordinates
-            print(district, *coordinates, flat[1])
-            write_to_csv(district, *coordinates, flat[1])
-            # print(get_coordinates(process_address(flat[0])))
-            time.sleep(0.1)
+    for district in districts[REGION][3:]:
+        csv_path = f"../flats/flats{district}.csv"
+        with open(csv_path, "r", encoding="utf-8") as f_obj:
+            flats = csv_reader(f_obj)
+            for flat in flats:
+                print(flat)
+                if not flat:
+                    continue
+                coordinates = get_coordinates(process_address(flat[0]))
+                if not coordinates:
+                    continue
+                # lat, lon = coordinates
+                print(district, *coordinates, flat[1])
+                write_to_csv(district, *coordinates, flat[1])
+                # print(get_coordinates(process_address(flat[0])))
+                # time.sleep(0.1)
 
 # geolocator = Nominatim(user_agent="geocoder")
 # location = geolocator.geocode(
