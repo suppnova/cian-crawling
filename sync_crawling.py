@@ -11,13 +11,13 @@ from app.models.flat import Flat
 regions = {"msk": 1, "spb": 2, "ekb": 4743}
 
 # districts = {
-#     "msk": [151, 325] + list(range(4, 12)),
+#     "msk": [1, 151, 325] + list(range(4, 12)),
 #     "spb": range(135, 151),
 #     "ekb": range(286, 293),
 # }
 
 districts = {
-    "msk": [151, 325] + list(range(4, 12)),
+    "msk": [1, 151, 325] + list(range(4, 12)),
     "spb": range(135, 151),
     "ekb": [288],
 }

@@ -5,4 +5,8 @@ pytest~=6.2.4
 isort~=5.8.0
 black~=21.5b2
 fake_useragent
-free-proxy
+folium~=0.12.1
+aiohttp~=3.7.4.post0
+geopy~=2.1.0
+pandas~=1.2.4
+matplotlib
