@@ -26,7 +26,7 @@ class CianCrawler:
         self.session = None
         self.region = region
         self.district = district
-        self.page = 7
+        self.page = 1
         self.flats = []
         self.proxies_dict = None
         self.update_proxy()
@@ -119,10 +119,8 @@ class CianCrawler:
             time.sleep(1)
 
             if not self.parse_page():
-                print("page for restart", self.page)
                 self.update_proxy()
                 continue
-                # break
             [write_flat_to_csv(flat.get_row(), self.district) for flat in self.flats]
             self.page += 1
             self.flats = []

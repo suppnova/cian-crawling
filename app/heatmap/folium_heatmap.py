@@ -15,6 +15,8 @@ from app.utils.path_helper import get_coords_storage_dirname, get_heatmaps_stora
 def init_city_dataframe():
     summary_df = DataFrame()
     for district in districts[REGION]:
+        print(district)
+        print(f"{get_coords_storage_dirname()}/{REGION}/flats{district}_coords_prices.csv")
         try:
             df = read_csv(
                 f"{get_coords_storage_dirname()}/{REGION}/flats{district}_coords_prices.csv"
@@ -22,6 +24,8 @@ def init_city_dataframe():
             summary_df = concat([summary_df, df])
         except FileNotFoundError:
             continue
+
+        print(df)
     return summary_df
 
 
@@ -34,6 +38,7 @@ def build_heatmap():
     )
 
     df = init_city_dataframe()
+    print(df)
 
     # Ensure you're handing it floats
     df["lat"] = df["lat"].astype(float)
