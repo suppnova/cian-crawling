@@ -1,9 +1,13 @@
 from collections import namedtuple
 
 import matplotlib.pyplot as plt
-import pandas as pd
+from pandas import read_csv
+from pandas.core.frame import DataFrame
 
 from districts import cities_names, districts, districts_names
+from app.utils.path_helper import get_flats_storage_dirname, get_histograms_storage_dir
+from app.utils.dir_helper import make_dir
+
 
 ReadDistricts = namedtuple("ReadDistricts", ["district", "datafr"])
 column_names = {"main_price": "Средняя цена, млн", "area": "Средняя площадь, м2"}
@@ -15,7 +19,7 @@ def import_flats():
 
     for city in storage:
         for district in districts[city]:
-            df = pd.read_csv(f"../flats/flats{district}.csv")
+            df = read_csv(f"{get_flats_storage_dirname()}/flats{district}.csv")
             storage[city].append(ReadDistricts(district, df))
 
     return storage
@@ -33,6 +37,12 @@ def get_mean_values(data) -> dict:
     return mean_values
 
 
+def save_plot(df: DataFrame, city: str, filename: str)->None:
+    df.plot.bar(rot=20)
+    plt.title(cities_names[city], fontdict={"fontsize": 14})
+    plt.savefig(f"{get_histograms_storage_dir()}/{city}_{filename}.png")
+
+
 def get_plot(mean_val_storage, city):
     prices = []
     areas = []
@@ -42,18 +52,22 @@ def get_plot(mean_val_storage, city):
         areas.append(mean_val_storage[district]["area"])
         indices.append(districts_names[district])
 
-    df_area = pd.DataFrame({"Средняя площадь, м2": areas}, index=indices)
-    df_area.plot.bar(rot=20)
-    plt.title(cities_names[city], fontdict={"fontsize": 14})
-    plt.savefig(f"histo_results/{city}_mean_areas.png")
+    save_plot(
+        DataFrame({"Средняя площадь, м2": areas}, index=indices),
+        city,
+        'mean_areas'
+    )
+    save_plot(
+        DataFrame({"Средняя цена, млн": prices}, index=indices),
+        city,
+        'mean_prices'
+    )
 
-    df_price = pd.DataFrame({"Средняя цена, млн": prices}, index=indices)
-    df_price.plot.bar(rot=20)
-    plt.title(cities_names[city], fontdict={"fontsize": 14})
-    plt.savefig(f"histo_results/{city}_mean_prices.png")
 
+def build_histograms():
+    data_storage = import_flats()
+    mean_values = get_mean_values(data_storage)
 
-data_storage = import_flats()
-mean_values = get_mean_values(data_storage)
-for city in data_storage:
-    get_plot(mean_values, city)
+    make_dir(get_histograms_storage_dir())
+    for city in data_storage:
+        get_plot(mean_values, city)
