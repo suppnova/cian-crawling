@@ -17,12 +17,6 @@ class CianCrawler:
     """Class for crawling cian.ru."""
 
     def __init__(self, region: int, district: int):
-        """
-        Constructor.
-
-        :param region: given region (1 - Moscow, 2 - Saint-Petersburg, 3 - Ekaterinburg)
-        :param district: given district (for example 1 - Northwestern Administrative District (Moscow))
-        """
         self.session = None
         self.region = region
         self.district = district
@@ -49,18 +43,6 @@ class CianCrawler:
         self.session.proxy = self.proxies_dict
         print(self.proxies_dict)
 
-    @staticmethod
-    def get_pages_amount(soup) -> int:
-        """
-        Get amount of pages to parse.
-
-        Amount of ads on one page: 28
-        :param soup: BeautifulSoup from the first page (contains amount of ads in h5 block)
-        :return: amount of pages to parse
-        """
-        ads = int("".join([char for char in soup.find("h5").text if char.isdigit()]))
-        return ceil(ads / 28)
-
     def get_response(self) -> str:
         """Get response from cian server.
 
@@ -82,19 +64,12 @@ class CianCrawler:
                 proxies=self.proxies_dict,
             )
             return response.text
-        # SOCKSHTTPConnectionPool
         except Exception as exc:
             print("Failed", self.proxies_dict, exc)
             self.update_proxy()
             return ""
 
     def parse_page(self) -> bool:
-        """Parse a given page.
-
-        Creates BeautifulSoup for html parsing.
-        For every flat gets container for parsing, then adds Flat instance to flats list.
-        :return: None
-        """
         print(
             "Parsing region:",
             self.region,
@@ -117,11 +92,11 @@ class CianCrawler:
         write_flat_to_csv(CSV_FLATS_HEADERS, self.district)
         while self.page <= pages:
             time.sleep(1)
-
             if not self.parse_page():
                 self.update_proxy()
                 continue
-            [write_flat_to_csv(flat.get_row(), self.district) for flat in self.flats]
+            for flat in self.flats:
+                write_flat_to_csv(flat.get_row(), self.district)
             self.page += 1
             self.flats = []
         return self.flats

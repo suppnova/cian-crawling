@@ -1,7 +1,7 @@
 import pytest
 from collections import namedtuple
 
-from app.geoparsing.geoparses import geolocator, get_coordinates, geoparse
+from app.geoparsing.geoparser import geolocator, get_coordinates, geoparse
 
 
 def test_bad_address(monkeypatch):

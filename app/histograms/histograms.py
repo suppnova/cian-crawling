@@ -7,7 +7,7 @@ from pandas.core.frame import DataFrame
 from app.utils.config import REGION
 from app.utils.dir_helper import make_dir
 from app.utils.path_helper import get_flats_storage_dirname, get_histograms_storage_dir
-from districts import cities_names, districts, districts_names
+from app.utils.districts import cities_names, districts, districts_names
 
 ReadDistricts = namedtuple("ReadDistricts", ["district", "datafr"])
 column_names = {"main_price": "Средняя цена, млн", "area": "Средняя площадь, м2"}
@@ -68,7 +68,6 @@ def get_plots(mean_val_storage, city):
 
 def build_histograms():
     data_storage = import_flats()
-    print(data_storage)
     mean_values = get_mean_values(data_storage)
 
     make_dir(get_histograms_storage_dir())

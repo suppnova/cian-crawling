@@ -1,4 +1,3 @@
-import csv
 import time
 
 from geopy.geocoders import Nominatim
@@ -7,7 +6,6 @@ from app.utils.address_helper import process_address
 from app.utils.config import REGION
 from app.utils.csv_helper import CSV_COORDS_HEADERS, read_flats, write_coords_to_csv
 from app.utils.districts import districts
-from app.utils.path_helper import get_coords_storage_dirname, get_flats_storage_dirname
 
 geolocator = Nominatim(user_agent="geocoder")
 

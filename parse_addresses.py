@@ -1,3 +1,3 @@
-from app.geoparsing.geoparses import geoparse
+from app.geoparsing.geoparser import geoparse
 
 geoparse()
