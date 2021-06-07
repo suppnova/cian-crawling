@@ -77,3 +77,7 @@ build_histograms.py
 ```
 
 Build Histograms with mean prices and areas by districts used Crawler results and save it as .png to `<STORAGE_PATH>/histograms/*.png`.
+
+## Examples
+
+The finished results are in the folder `results_example`. Use them to build and display a more complete heatmap (use `/coords`) and histogram (use `/flats`). When using, it is recommended to copy the folder with the result to the specified directory `<STORAGE_PATH>` in order to avoid data loss.

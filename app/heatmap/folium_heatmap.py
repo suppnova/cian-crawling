@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 import branca.colormap as cm
 from folium import folium
 from folium.plugins import HeatMap
@@ -41,7 +39,6 @@ def build_heatmap():
 
     # Filter the DF for rows, then columns, then remove NaNs
     heat_df = df[["lat", "lon", "price"]]
-    # heat_df = heat_df.dropna(axis=0, subset=["lat", "lon"])
 
     max_price = heat_df["price"].max() / 10 ** 3
     min_price = heat_df["price"].min() / 10 ** 3
