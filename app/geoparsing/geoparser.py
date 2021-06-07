@@ -32,6 +32,6 @@ def geoparse():
             if not coordinates:
                 continue
             lat, lon = coordinates
-            print(district, lat, lon, flat[1])
-            write_coords_to_csv((lat, lon, flat[1]), district)
+            print(district, lat, lon, flat[2])
+            write_coords_to_csv((lat, lon, flat[2]), district)
             time.sleep(0.1)

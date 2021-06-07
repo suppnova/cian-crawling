@@ -25,7 +25,6 @@ class CianCrawler:
     """Class for crawling cian.ru."""
 
     def __init__(self, region: int, district: int):
-        # def __init__(self, region: int, district: int, page=1, flats=[], session=None):
         """
         Constructor.
 
@@ -90,7 +89,7 @@ class CianCrawler:
         # soup = BeautifulSoup(self.get_response().text, features="html.parser")
         # pages = self.get_pages_amount()
         page = 1
-        pages = 1
+        pages = 5
         tasks = []
         self.session = aiohttp.ClientSession()
         while page <= pages:
